@@ -48,6 +48,8 @@ const handleSuccess = function (stream) {
   });
 
   button.addEventListener("mouseup", () => {
+    requestAuthorizationToRequest();
+
     if (recordingPermission) {
       mediaRecorder.stop();
       console.log("Запись остоновлена");
