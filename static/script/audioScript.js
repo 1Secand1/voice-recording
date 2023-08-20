@@ -67,10 +67,10 @@ button.addEventListener("mouseup", async () => {
   if (!getCheckAccess) {
     console.log("Запрос");
 
-    navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(handleSuccess);
   }
 });
 
-// navigator.mediaDevices
-//   .getUserMedia({ audio: true, video: false })
-//   .then(handleSuccess);
+navigator.mediaDevices
+  .getUserMedia({ audio: true, video: false })
+  .then(handleSuccess);
