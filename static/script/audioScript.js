@@ -1,35 +1,3 @@
-if (0) {
-  function uploadAudioFile(file) {
-    const formData = new FormData();
-    formData.append("audioFile", file);
-
-    const url = "/uploadAudio";
-
-    fetch(url, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        console.log(formData);
-        if (response.ok) {
-          console.log("Аудиофайл успешно отправлен на сервер");
-        } else {
-          console.error("Ошибка при отправке аудиофайла на сервер");
-        }
-      })
-      .catch((error) => {
-        console.error("Ошибка при отправке аудиофайла: ", error);
-      });
-  }
-  function voiceRcording() {
-    return {
-      allowRecording() {},
-      startRecordingvoice(eventName) {},
-      stopRecordingvoice() {},
-    };
-  }
-}
-
 const audioRecording = document.getElementById("download");
 const button = document.getElementById("voiceRecording");
 let recordingPermission = false;
@@ -48,16 +16,14 @@ const handleSuccess = function (stream) {
   });
 
   button.addEventListener("mouseup", () => {
-    
     if (recordingPermission) {
       mediaRecorder.stop();
-      console.log("Запись остоновлена");
+      console.log("Запись остановлена");
     }
   });
-  
+
   button.addEventListener("mousedown", () => {
     requestAuthorizationToRequest();
-    
     if (recordingPermission) {
       recordedChunks = [];
       mediaRecorder.start();
@@ -67,16 +33,23 @@ const handleSuccess = function (stream) {
 };
 
 function requestAuthorizationToRequest() {
-  navigator.permissions.query({ name: "microphone" }).then(function (result) {
-    if (result.state == "granted") {
-      recordingPermission = true;
-
-      navigator.mediaDevices.then(handleSuccess);
-
-      return;
-    } else {
-      navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    }
-    result.onchange = function () {};
-  });
+  navigator.permissions
+    .query({ name: "microphone" })
+    .then(function (result) {
+      if (result.state === "granted") {
+        recordingPermission = true;
+        navigator.mediaDevices
+          .getUserMedia({ audio: true, video: false })
+          .then(handleSuccess)
+          .catch((error) => console.log(error));
+        return;
+      } else {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true, video: false })
+          .then(handleSuccess)
+          .catch((error) => console.log(error));
+      }
+      result.onchange = function () {};
+    })
+    .catch((error) => console.log(error));
 }
