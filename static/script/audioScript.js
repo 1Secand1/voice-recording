@@ -2,10 +2,37 @@ const audioRecording = document.getElementById("download");
 const button = document.getElementById("voiceRecording");
 let recordingPermission = false;
 
+function checkAccess() {
+  let useAuthorization = false;
+  navigator.mediaDevices.getUserMedia({ audio: true });
+
+  navigator.permissions.query({ name: "microphone" }).then(function (result) {
+    if (result.state == "granted") {
+      console.log("Да");
+      useAuthorization = true;
+    }
+
+    if (result.state == "prompt") {
+      console.log("Нет");
+      useAuthorization = false;
+    }
+
+    if (result.state == "denied") {
+      console.log("Заблокировано");
+      useAuthorization = false;
+    }
+
+    result.onchange = function () {};
+  });
+
+  console.log("Отдаёт", useAuthorization);
+  return useAuthorization;
+}
+
 button.addEventListener("mouseup", () => {
   const getCheckAccess = checkAccess();
 
-  console.log("Получает", getCheckAccess);
+  console.log("Получает", checkAccess);
 
   if (getCheckAccess) {
     console.log("Записать звук");
@@ -47,30 +74,3 @@ button.addEventListener("mouseup", () => {
 // navigator.mediaDevices
 //   .getUserMedia({ audio: true, video: false })
 //   .then(handleSuccess);
-
-function checkAccess() {
-  let useAuthorization = false;
-  navigator.mediaDevices.getUserMedia({ audio: true });
-
-  navigator.permissions.query({ name: "microphone" }).then(function (result) {
-    if (result.state == "granted") {
-      console.log("Да");
-      useAuthorization = true;
-    }
-
-    if (result.state == "prompt") {
-      console.log("Нет");
-      useAuthorization = false;
-    }
-
-    if (result.state == "denied") {
-      console.log("Заблокировано");
-      useAuthorization = false;
-    }
-
-    result.onchange = function () {};
-  });
-
-  console.log("Отдаёт", useAuthorization);
-  return useAuthorization;
-}
