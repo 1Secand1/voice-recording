@@ -16,34 +16,32 @@ const handleSuccess = function (stream) {
   });
 
   button.addEventListener("mouseup", () => {
-    if (recordingPermission) {
-      mediaRecorder.stop();
-      console.log("Запись остановлена");
-    }
+    mediaRecorder.stop();
+    console.log("Запись остоновлена");
   });
 
   button.addEventListener("mousedown", () => {
-    requestAuthorizationToRequest();
-
-    if (recordingPermission) {
-      recordedChunks = [];
-      mediaRecorder.start();
-      console.log("Запись запущена");
-    }
+    recordedChunks = [];
+    mediaRecorder.start();
+    console.log("Запись запущена");
   });
 };
 
-function requestAuthorizationToRequest() {
-  navigator.permissions
-    .query({ name: "microphone" })
-    .then((result) => {
-      recordingPermission = result.state === "granted";
+navigator.mediaDevices
+  .getUserMedia({ audio: true, video: false })
+  .then(handleSuccess);
 
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: false })
-        .then(handleSuccess)
-        .catch((error) => console.log(error));
-      result.onchange = () => {};
-    })
-    .catch((error) => console.log(error));
+function test() {
+  navigator.mediaDevices.getUserMedia({ audio: true });
+
+  navigator.permissions.query({ name: "microphone" }).then(function (result) {
+    if (result.state == "granted") {
+      console.log("Да");
+    } else if (result.state == "prompt") {
+      console.log("Нет");
+    } else if (result.state == "denied") {
+      console.log("Заблокировано");
+    }
+    result.onchange = function () {};
+  });
 }
