@@ -87,18 +87,22 @@ function initializeMediaRecorder(stream) {
 }
 
 button.addEventListener("mousedown", () => {
-  recordedChunks = [];
-
-  navigator.mediaDevices
-    .getUserMedia({ audio: true })
-    .then((stream) => {
-      initializeMediaRecorder(stream);
-      mediaRecorder.start();
-      console.log("Запись запущена");
-    })
-    .catch((error) => {
-      console.error("Ошибка при запросе на использование микрофона:", error);
-    });
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    mediaRecorder.stop();
+    console.log("Запись остановлена");
+  } else {
+    // Запрашиваем разрешение на использование микрофона
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        initializeMediaRecorder(stream);
+        mediaRecorder.start();
+        console.log("Запись запущена");
+      })
+      .catch((error) => {
+        console.error("Ошибка при запросе на использование микрофона:", error);
+      });
+  }
 });
 
 button.addEventListener("mouseup", () => {
