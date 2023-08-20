@@ -32,7 +32,7 @@ async function checkAccess() {
 button.addEventListener("mouseup", async () => {
   const getCheckAccess = await checkAccess();
 
-  const handleSuccess = function (stream) {
+  function handleSuccess(stream) {
     const options = { mimeType: "audio/webm" };
     let recordedChunks = [];
     const mediaRecorder = new MediaRecorder(stream, options);
@@ -55,7 +55,7 @@ button.addEventListener("mouseup", async () => {
       mediaRecorder.start();
       console.log("Запись запущена");
     });
-  };
+  }
 
   if (getCheckAccess) {
     navigator.mediaDevices.getUserMedia({ audio: true }).then(handleSuccess);
@@ -65,7 +65,3 @@ button.addEventListener("mouseup", async () => {
     navigator.mediaDevices.getUserMedia({ audio: true });
   }
 });
-
-// navigator.mediaDevices
-//   .getUserMedia({ audio: true, video: false })
-//   .then(handleSuccess);
