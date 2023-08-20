@@ -3,26 +3,23 @@ const button = document.getElementById("voiceRecording");
 let recordingPermission = false;
 
 function checkAccess() {
-  let useAuthorization = false;
+  let useAuthorization = true;
   navigator.mediaDevices.getUserMedia({ audio: true });
 
   navigator.permissions.query({ name: "microphone" }).then(function (result) {
     if (result.state == "granted") {
       console.log("Да");
-      useAuthorization = true;
-      return;
+      return (useAuthorization = true);
     }
 
     if (result.state == "prompt") {
       console.log("Нет");
-      useAuthorization = false;
-      return;
+      return (useAuthorization = false);
     }
 
     if (result.state == "denied") {
       console.log("Заблокировано");
-      useAuthorization = false;
-      return;
+      return (useAuthorization = false);
     }
 
     result.onchange = function () {};
