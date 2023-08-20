@@ -71,6 +71,6 @@ button.addEventListener("mouseup", async () => {
   }
 });
 
-navigator.mediaDevices
-  .getUserMedia({ audio: true, video: false })
-  .then(handleSuccess);
+// navigator.mediaDevices
+//   .getUserMedia({ audio: true, video: false })
+//   .then(handleSuccess);
