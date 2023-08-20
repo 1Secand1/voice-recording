@@ -5,9 +5,9 @@ let recordingPermission = false;
 button.addEventListener("mouseup", () => {
   const getCheckAccess = checkAccess();
 
-  console.log("Получает", checkAccess);
+  console.log("Получает", getCheckAccess);
 
-  if (checkAccess) {
+  if (getCheckAccess) {
     console.log("Записать звук");
     const handleSuccess = function (stream) {
       const options = { mimeType: "audio/webm" };
@@ -37,7 +37,7 @@ button.addEventListener("mouseup", () => {
     navigator.mediaDevices.then(handleSuccess);
   }
 
-  if (!checkAccess) {
+  if (!getCheckAccess) {
     console.log("Запрос");
 
     navigator.mediaDevices.getUserMedia({ audio: true, video: false });
