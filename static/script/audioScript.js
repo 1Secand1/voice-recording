@@ -61,13 +61,13 @@ button.addEventListener("mouseup", async () => {
       });
     };
 
-    navigator.mediaDevices.then(handleSuccess);
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(handleSuccess);
   }
 
   if (!getCheckAccess) {
     console.log("Запрос");
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(handleSuccess);
+    navigator.mediaDevices.getUserMedia({ audio: true });
   }
 });
 
