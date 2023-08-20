@@ -1,67 +1,49 @@
-const audioRecording = document.getElementById("download");
-const button = document.getElementById("voiceRecording");
-let recordingPermission = false;
+const handleSuccess = function (stream) {
+  const options = { mimeType: "audio/webm" };
+  let recordedChunks = [];
+  const mediaRecorder = new MediaRecorder(stream, options);
 
-async function checkAccess() {
-  let useAuthorization = true;
-  await navigator.mediaDevices.getUserMedia({ audio: true });
+  mediaRecorder.addEventListener("dataavailable", (e) => {
+    if (e.data.size > 0) recordedChunks.push(e.data);
+  });
 
-  const result = await navigator.permissions.query({ name: "microphone" });
+  mediaRecorder.addEventListener("stop", () => {
+    audioRecording.src = URL.createObjectURL(new Blob(recordedChunks));
+  });
 
-  if (result.state == "granted") {
-    console.log("Да");
-    useAuthorization = true;
-  }
+  button.addEventListener("mouseup", () => {
+    mediaRecorder.stop();
+    console.log("Запись остановлена");
+  });
 
-  if (result.state == "prompt") {
-    console.log("Нет");
-    useAuthorization = false;
-  }
+  button.addEventListener("mousedown", () => {
+    recordedChunks = [];
+    mediaRecorder.start();
+    console.log("Запись запущена");
+  });
+};
 
-  if (result.state == "denied") {
-    console.log("Заблокировано");
-    useAuthorization = false;
-  }
-
-  result.onchange = function () {};
-
-  console.log("Отдаёт", useAuthorization);
-  return useAuthorization;
+function test() {
+  navigator.permissions.query({ name: "microphone" }).then(function (result) {
+    if (result.state == "granted") {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(handleSuccess)
+        .catch(function (error) {
+          console.log("Ошибка при получении медиа-потока:", error);
+        });
+    } else if (result.state == "prompt") {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(handleSuccess)
+        .catch(function (error) {
+          console.log("Ошибка при получении медиа-потока:", error);
+        });
+    } else if (result.state == "denied") {
+      console.log("Доступ к микрофону заблокирован");
+    }
+    result.onchange = function () {};
+  });
 }
 
-button.addEventListener("mouseup", async () => {
-  const getCheckAccess = await checkAccess();
-
-  const handleSuccess = function (stream) {
-    const options = { mimeType: "audio/webm" };
-    let recordedChunks = [];
-    const mediaRecorder = new MediaRecorder(stream, options);
-
-    mediaRecorder.addEventListener("dataavailable", (e) => {
-      if (e.data.size > 0) recordedChunks.push(e.data);
-    });
-
-    mediaRecorder.addEventListener("stop", () => {
-      audioRecording.src = URL.createObjectURL(new Blob(recordedChunks));
-    });
-
-    button.addEventListener("mouseup", () => {
-      mediaRecorder.stop();
-      console.log("Запись остановлена");
-    });
-
-    button.addEventListener("mousedown", () => {
-      recordedChunks = [];
-      mediaRecorder.start();
-      console.log("Запись запущена");
-    });
-  };
-
-  if (getCheckAccess) {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(handleSuccess);
-  }
-
-  if (!getCheckAccess) {
-    navigator.mediaDevices.getUserMedia({ audio: true });
-  }
-});
+test();
