@@ -1,10 +1,81 @@
+if (0) {
+  const audioRecording = document.getElementById("download");
+  const button = document.getElementById("voiceRecording");
+
+  async function checkAccess() {
+    let useAuthorization = true;
+    await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    const result = await navigator.permissions.query({ name: "microphone" });
+
+    if (result.state == "granted") {
+      console.log("Да");
+      useAuthorization = true;
+    }
+
+    if (result.state == "prompt") {
+      console.log("Нет");
+      useAuthorization = false;
+    }
+
+    if (result.state == "denied") {
+      console.log("Заблокировано");
+      useAuthorization = false;
+    }
+
+    result.onchange = function () {};
+
+    console.log("Отдаёт", useAuthorization);
+    return useAuthorization;
+  }
+
+  button.addEventListener("mouseup", async () => {
+    const getCheckAccess = await checkAccess();
+
+    const handleSuccess = function (stream) {
+      const options = { mimeType: "audio/webm" };
+      let recordedChunks = [];
+      const mediaRecorder = new MediaRecorder(stream, options);
+
+      mediaRecorder.addEventListener("dataavailable", (e) => {
+        if (e.data.size > 0) recordedChunks.push(e.data);
+      });
+
+      mediaRecorder.addEventListener("stop", () => {
+        audioRecording.src = URL.createObjectURL(new Blob(recordedChunks));
+      });
+
+      button.addEventListener("mouseup", () => {
+        mediaRecorder.stop();
+        console.log("Запись остановлена");
+      });
+
+      button.addEventListener("mousedown", () => {
+        recordedChunks = [];
+        mediaRecorder.start();
+        console.log("Запись запущена");
+      });
+    };
+
+    if (getCheckAccess) {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(handleSuccess);
+    }
+
+    if (!getCheckAccess) {
+      navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+  });
+}
+
 const audioRecording = document.getElementById("download");
 const button = document.getElementById("voiceRecording");
 
-const handleSuccess = function (stream) {
+let mediaRecorder;
+let recordedChunks = [];
+
+function initializeMediaRecorder(stream) {
   const options = { mimeType: "audio/webm" };
-  let recordedChunks = [];
-  const mediaRecorder = new MediaRecorder(stream, options);
+  mediaRecorder = new MediaRecorder(stream, options);
 
   mediaRecorder.addEventListener("dataavailable", (e) => {
     if (e.data.size > 0) recordedChunks.push(e.data);
@@ -13,40 +84,39 @@ const handleSuccess = function (stream) {
   mediaRecorder.addEventListener("stop", () => {
     audioRecording.src = URL.createObjectURL(new Blob(recordedChunks));
   });
-
-  button.addEventListener("mouseup", () => {
-    mediaRecorder.stop();
-    console.log("Запись остановлена");
-  });
-
-  button.addEventListener("mousedown", () => {
-    recordedChunks = [];
-    mediaRecorder.start();
-    console.log("Запись запущена");
-  });
-};
-
-function test() {
-  navigator.permissions.query({ name: "microphone" }).then(function (result) {
-    if (result.state == "granted") {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then(handleSuccess)
-        .catch(function (error) {
-          console.log("Ошибка при получении медиа-потока:", error);
-        });
-    } else if (result.state == "prompt") {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then(handleSuccess)
-        .catch(function (error) {
-          console.log("Ошибка при получении медиа-потока:", error);
-        });
-    } else if (result.state == "denied") {
-      console.log("Доступ к микрофону заблокирован");
-    }
-    result.onchange = function () {};
-  });
 }
 
-test();
+button.addEventListener("mousedown", () => {
+  recordedChunks = [];
+
+  navigator.mediaDevices
+    .getUserMedia({ audio: true })
+    .then((stream) => {
+      initializeMediaRecorder(stream);
+      mediaRecorder.start();
+      console.log("Запись запущена");
+    })
+    .catch((error) => {
+      console.error("Ошибка при запросе на использование микрофона:", error);
+    });
+});
+
+button.addEventListener("mouseup", () => {
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    mediaRecorder.stop();
+    console.log("Запись остановлена");
+  }
+});
+
+navigator.permissions.query({ name: "microphone" }).then(function (result) {
+  if (result.state === "granted") {
+    console.log("Микрофон разрешен");
+  } else if (result.state === "prompt") {
+    console.log("Запрос разрешения микрофона");
+  } else if (result.state === "denied") {
+    console.log("Микрофон заблокирован");
+  }
+  result.onchange = function () {
+    console.log("Изменение состояния разрешения микрофона:", result.state);
+  };
+});
