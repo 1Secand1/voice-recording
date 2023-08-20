@@ -3,8 +3,8 @@ const button = document.getElementById("voiceRecording");
 let recordingPermission = false;
 
 button.addEventListener("mouseup", () => {
-  console.log(checkAccess());
-  
+  console.log(checkAccess(), "-");
+
   if (checkAccess()) {
     console.log("Записать звук");
     const handleSuccess = function (stream) {
@@ -47,22 +47,23 @@ button.addEventListener("mouseup", () => {
 //   .then(handleSuccess);
 
 function checkAccess() {
+  let useAuthorization = false;
   navigator.mediaDevices.getUserMedia({ audio: true });
 
   navigator.permissions.query({ name: "microphone" }).then(function (result) {
     if (result.state == "granted") {
       console.log("Да");
-      return true;
+      useAuthorization = true;
     }
 
     if (result.state == "prompt") {
       console.log("Нет");
-      return false;
+      useAuthorization = false;
     }
 
     if (result.state == "denied") {
       console.log("Заблокировано");
-      return false;
+      useAuthorization = false;
     }
 
     result.onchange = function () {};
