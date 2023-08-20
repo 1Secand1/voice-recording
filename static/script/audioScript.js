@@ -24,7 +24,7 @@ const handleSuccess = function (stream) {
 
   button.addEventListener("mousedown", () => {
     requestAuthorizationToRequest();
-    
+
     if (recordingPermission) {
       recordedChunks = [];
       mediaRecorder.start();
@@ -39,18 +39,29 @@ function requestAuthorizationToRequest() {
     .then(function (result) {
       if (result.state === "granted") {
         recordingPermission = true;
-        navigator.mediaDevices
-          .getUserMedia({ audio: true, video: false })
-          .then(handleSuccess)
-          .catch((error) => console.log(error));
-        return;
-      } else {
-        navigator.mediaDevices
-          .getUserMedia({ audio: true, video: false })
-          .then(handleSuccess)
-          .catch((error) => console.log(error));
       }
+
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: false })
+        .then(handleSuccess)
+        .catch((error) => console.log(error));
+
       result.onchange = function () {};
+    })
+    .catch((error) => console.log(error));
+}
+
+function requestAuthorizationToRequest() {
+  navigator.permissions
+    .query({ name: "microphone" })
+    .then((result) => {
+      recordingPermission = result.state === "granted";
+
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: false })
+        .then(handleSuccess)
+        .catch((error) => console.log(error));
+      result.onchange = () => {};
     })
     .catch((error) => console.log(error));
 }
