@@ -3,7 +3,7 @@ const button = document.getElementById("voiceRecording");
 let recordingPermission = false;
 
 button.addEventListener("mouseup", () => {
-  const checkAccess = checkAccess();
+  const getCheckAccess = checkAccess();
 
   console.log("Получает", checkAccess);
 
