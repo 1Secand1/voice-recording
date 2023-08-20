@@ -32,7 +32,7 @@ async function checkAccess() {
 button.addEventListener("mouseup", async () => {
   const getCheckAccess = await checkAccess();
 
-  const handleSuccess = function (stream) {
+  function handleSuccess(stream) {
     const options = { mimeType: "audio/webm" };
     let recordedChunks = [];
     const mediaRecorder = new MediaRecorder(stream, options);
@@ -55,8 +55,7 @@ button.addEventListener("mouseup", async () => {
       mediaRecorder.start();
       console.log("Запись запущена");
     });
-  };
-
+  }
   handleSuccess();
 
   if (getCheckAccess) {
