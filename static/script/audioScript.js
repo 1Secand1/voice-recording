@@ -24,6 +24,7 @@ const handleSuccess = function (stream) {
 
   button.addEventListener("mousedown", () => {
     requestAuthorizationToRequest();
+    
     if (recordingPermission) {
       recordedChunks = [];
       mediaRecorder.start();
