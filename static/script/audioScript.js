@@ -1,3 +1,7 @@
+const audioRecording = document.getElementById("download");
+const button = document.getElementById("voiceRecording");
+let recordingPermission = false;
+
 const handleSuccess = function (stream) {
   const options = { mimeType: "audio/webm" };
   let recordedChunks = [];
