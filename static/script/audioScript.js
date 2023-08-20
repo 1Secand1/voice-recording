@@ -2,35 +2,35 @@ const audioRecording = document.getElementById("download");
 const button = document.getElementById("voiceRecording");
 let recordingPermission = false;
 
-function checkAccess() {
+async function checkAccess() {
   let useAuthorization = true;
-  navigator.mediaDevices.getUserMedia({ audio: true });
+  await navigator.mediaDevices.getUserMedia({ audio: true });
 
-  navigator.permissions.query({ name: "microphone" }).then(function (result) {
-    if (result.state == "granted") {
-      console.log("Да");
-      return (useAuthorization = true);
-    }
+  const result = await navigator.permissions.query({ name: "microphone" });
 
-    if (result.state == "prompt") {
-      console.log("Нет");
-      return (useAuthorization = false);
-    }
+  if (result.state == "granted") {
+    console.log("Да");
+    useAuthorization = true;
+  }
 
-    if (result.state == "denied") {
-      console.log("Заблокировано");
-      return (useAuthorization = false);
-    }
+  if (result.state == "prompt") {
+    console.log("Нет");
+    useAuthorization = false;
+  }
 
-    result.onchange = function () {};
-  });
+  if (result.state == "denied") {
+    console.log("Заблокировано");
+    useAuthorization = false;
+  }
+
+  result.onchange = function () {};
 
   console.log("Отдаёт", useAuthorization);
   return useAuthorization;
 }
 
-button.addEventListener("mouseup", () => {
-  const getCheckAccess = checkAccess();
+button.addEventListener("mouseup", async () => {
+  const getCheckAccess = await checkAccess();
 
   console.log("Получает", getCheckAccess);
 
@@ -51,7 +51,7 @@ button.addEventListener("mouseup", () => {
 
       button.addEventListener("mouseup", () => {
         mediaRecorder.stop();
-        console.log("Запись остоновлена");
+        console.log("Запись остановлена");
       });
 
       button.addEventListener("mousedown", () => {
