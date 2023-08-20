@@ -68,4 +68,6 @@ function checkAccess() {
 
     result.onchange = function () {};
   });
+
+  return useAuthorization;
 }
