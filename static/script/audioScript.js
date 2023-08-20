@@ -32,41 +32,36 @@ async function checkAccess() {
 button.addEventListener("mouseup", async () => {
   const getCheckAccess = await checkAccess();
 
-  console.log("Получает", getCheckAccess);
+  const handleSuccess = function (stream) {
+    const options = { mimeType: "audio/webm" };
+    let recordedChunks = [];
+    const mediaRecorder = new MediaRecorder(stream, options);
+
+    mediaRecorder.addEventListener("dataavailable", (e) => {
+      if (e.data.size > 0) recordedChunks.push(e.data);
+    });
+
+    mediaRecorder.addEventListener("stop", () => {
+      audioRecording.src = URL.createObjectURL(new Blob(recordedChunks));
+    });
+
+    button.addEventListener("mouseup", () => {
+      mediaRecorder.stop();
+      console.log("Запись остановлена");
+    });
+
+    button.addEventListener("mousedown", () => {
+      recordedChunks = [];
+      mediaRecorder.start();
+      console.log("Запись запущена");
+    });
+  };
 
   if (getCheckAccess) {
-    console.log("Записать звук");
-    const handleSuccess = function (stream) {
-      const options = { mimeType: "audio/webm" };
-      let recordedChunks = [];
-      const mediaRecorder = new MediaRecorder(stream, options);
-
-      mediaRecorder.addEventListener("dataavailable", (e) => {
-        if (e.data.size > 0) recordedChunks.push(e.data);
-      });
-
-      mediaRecorder.addEventListener("stop", () => {
-        audioRecording.src = URL.createObjectURL(new Blob(recordedChunks));
-      });
-
-      button.addEventListener("mouseup", () => {
-        mediaRecorder.stop();
-        console.log("Запись остановлена");
-      });
-
-      button.addEventListener("mousedown", () => {
-        recordedChunks = [];
-        mediaRecorder.start();
-        console.log("Запись запущена");
-      });
-    };
-
     navigator.mediaDevices.getUserMedia({ audio: true }).then(handleSuccess);
   }
 
   if (!getCheckAccess) {
-    console.log("Запрос");
-
     navigator.mediaDevices.getUserMedia({ audio: true });
   }
 });
