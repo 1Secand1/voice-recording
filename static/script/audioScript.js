@@ -10,16 +10,19 @@ function checkAccess() {
     if (result.state == "granted") {
       console.log("Да");
       useAuthorization = true;
+      return;
     }
 
     if (result.state == "prompt") {
       console.log("Нет");
       useAuthorization = false;
+      return;
     }
 
     if (result.state == "denied") {
       console.log("Заблокировано");
       useAuthorization = false;
+      return;
     }
 
     result.onchange = function () {};
@@ -32,7 +35,7 @@ function checkAccess() {
 button.addEventListener("mouseup", () => {
   const getCheckAccess = checkAccess();
 
-  console.log("Получает", checkAccess);
+  console.log("Получает", getCheckAccess);
 
   if (getCheckAccess) {
     console.log("Записать звук");
