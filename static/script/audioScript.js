@@ -16,6 +16,7 @@ const handleSuccess = function (stream) {
   });
 
   button.addEventListener("mouseup", () => {
+    test();
     mediaRecorder.stop();
     console.log("Запись остоновлена");
   });
@@ -32,15 +33,12 @@ navigator.mediaDevices
   .then(handleSuccess);
 
 function test() {
-  navigator.mediaDevices.getUserMedia({ audio: true });
-
   navigator.permissions.query({ name: "microphone" }).then(function (result) {
     if (result.state == "granted") {
       console.log("Да");
-    } else if (result.state == "prompt") {
+    } else {
       console.log("Нет");
-    } else if (result.state == "denied") {
-      console.log("Заблокировано");
+      navigator.mediaDevices.getUserMedia({ audio: true });
     }
     result.onchange = function () {};
   });
