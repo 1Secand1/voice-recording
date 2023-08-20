@@ -36,24 +36,6 @@ const handleSuccess = function (stream) {
 function requestAuthorizationToRequest() {
   navigator.permissions
     .query({ name: "microphone" })
-    .then(function (result) {
-      if (result.state === "granted") {
-        recordingPermission = true;
-      }
-
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: false })
-        .then(handleSuccess)
-        .catch((error) => console.log(error));
-
-      result.onchange = function () {};
-    })
-    .catch((error) => console.log(error));
-}
-
-function requestAuthorizationToRequest() {
-  navigator.permissions
-    .query({ name: "microphone" })
     .then((result) => {
       recordingPermission = result.state === "granted";
 
