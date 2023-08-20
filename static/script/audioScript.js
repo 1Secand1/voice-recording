@@ -3,6 +3,8 @@ const button = document.getElementById("voiceRecording");
 let recordingPermission = false;
 
 button.addEventListener("mouseup", () => {
+  console.log(checkAccess());
+  
   if (checkAccess()) {
     console.log("Записать звук");
     const handleSuccess = function (stream) {
@@ -35,7 +37,7 @@ button.addEventListener("mouseup", () => {
 
   if (!checkAccess()) {
     console.log("Запрос");
-  
+
     navigator.mediaDevices.getUserMedia({ audio: true, video: false });
   }
 });
