@@ -4,6 +4,7 @@ let recordingPermission = false;
 
 button.addEventListener("mouseup", () => {
   if (checkAccess()) {
+    console.log("Записать звук");
     const handleSuccess = function (stream) {
       const options = { mimeType: "audio/webm" };
       let recordedChunks = [];
@@ -33,6 +34,8 @@ button.addEventListener("mouseup", () => {
   }
 
   if (!checkAccess()) {
+    console.log("Запрос");
+  
     navigator.mediaDevices.getUserMedia({ audio: true, video: false });
   }
 });
