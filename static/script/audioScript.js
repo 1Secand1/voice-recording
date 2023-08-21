@@ -69,6 +69,9 @@ if (0) {
 
 const audioRecording = document.getElementById("download");
 const button = document.getElementById("voiceRecording");
+const isMobile =
+  "ontouchstart" in document.documentElement &&
+  navigator.userAgent.match(/Mobi/);
 
 let mediaRecorder;
 let recordedChunks = [];
@@ -86,7 +89,7 @@ function initializeMediaRecorder(stream) {
   });
 }
 
-button.addEventListener("mousedown", () => {
+function startRecording() {
   if (mediaRecorder && mediaRecorder.state === "recording") {
     mediaRecorder.stop();
     console.log("Запись остановлена");
@@ -102,11 +105,18 @@ button.addEventListener("mousedown", () => {
         console.error("Ошибка при запросе на использование микрофона:", error);
       });
   }
-});
-
-button.addEventListener("mouseup", () => {
+}
+function stopRecording() {
   if (mediaRecorder && mediaRecorder.state === "recording") {
     mediaRecorder.stop();
     console.log("Запись остановлена");
   }
-});
+}
+
+if (isMobile) {
+  button.addEventListener("touchstart", startRecording);
+  button.addEventListener("touchend", stopRecording);
+} else {
+  button.addEventListener("mousedown", startRecording);
+  button.addEventListener("mouseup", stopRecording);
+}
