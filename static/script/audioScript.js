@@ -91,7 +91,6 @@ button.addEventListener("mousedown", () => {
     mediaRecorder.stop();
     console.log("Запись остановлена");
   } else {
-    // Запрашиваем разрешение на использование микрофона
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((stream) => {
@@ -110,17 +109,4 @@ button.addEventListener("mouseup", () => {
     mediaRecorder.stop();
     console.log("Запись остановлена");
   }
-});
-
-navigator.permissions.query({ name: "microphone" }).then(function (result) {
-  if (result.state === "granted") {
-    console.log("Микрофон разрешен");
-  } else if (result.state === "prompt") {
-    console.log("Запрос разрешения микрофона");
-  } else if (result.state === "denied") {
-    console.log("Микрофон заблокирован");
-  }
-  result.onchange = function () {
-    console.log("Изменение состояния разрешения микрофона:", result.state);
-  };
 });
