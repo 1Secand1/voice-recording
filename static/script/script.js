@@ -21,7 +21,3 @@ function addСlassPress(idButton, className) {
 }
 
 addСlassPress("voiceRecording", "animated");
-
-const screenWidth = window.screen.width;
-
-alert(screenWidth);
