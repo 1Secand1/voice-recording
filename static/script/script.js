@@ -1,14 +1,14 @@
-function addСlassPress(idTrigger, className) {
-  const triggerEvents = document.getElementById(idTrigger);
+function addСlassPress(idButton, className) {
+  const button = document.getElementById(idButton);
   const isMobile =
     "ontouchstart" in document.documentElement &&
-    navigator.userAgent.match(/Mobi/);
+    navigator.userAgent.toLowerCase().indexOf("chrome") == -1;
 
   function classListAdd() {
-    triggerEvents.classList.add(className);
+    button.classList.add(className);
   }
   function classListRemove() {
-    triggerEvents.classList.remove(className);
+    button.classList.remove(className);
   }
 
   if (isMobile) {

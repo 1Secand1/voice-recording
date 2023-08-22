@@ -81,4 +81,4 @@ function audioRecordingScript() {
     button.addEventListener("mouseout", stopRecording);
   }
 }
-audioRecordingScript();
+// audioRecordingScript();

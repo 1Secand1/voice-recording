@@ -30,10 +30,11 @@ body {
 .logo {
   display: flex;
   width: 100%;
+  align-self: stretch;
 
   max-width: 800px;
 
-  margin-top: 10%;
+  margin-top: min(35vh, 100px);
   align-items: center;
   justify-content: center;
 }
@@ -42,10 +43,11 @@ body {
 .logo__text {
   color: #9268bb;
   font-family: Montserrat;
-  font-size: 90px;
+  font-size: 75px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  margin-left: 20px;
 }
 .logo__text--big {
 }
@@ -60,8 +62,8 @@ body {
   left: 0;
   right: 0;
 
-  width: 89px;
-  height: 89px;
+  width: 75px;
+  height: 75px;
 
   border-radius: 50%;
 
@@ -90,10 +92,11 @@ body {
   position: relative;
   right: 7px;
   bottom: 7px;
+  background-image: url("../img/index/microphone-icon.svg");
 
   border-radius: 100%;
   background: #8e81ed;
-  border: solid 8px #c8c1f6;
+  border: solid 5px #c8c1f6;
 
   cursor: pointer;
 }
@@ -124,7 +127,7 @@ body {
 }
 
 .vs {
-    border: solid 8px #c8c1f6;
+  border: solid 8px #c8c1f6;
 }
 
 @-webkit-keyframes breathe-circle {
@@ -163,5 +166,41 @@ body {
   }
   100% {
     box-shadow: 0px 0px 0px 5px rgba(42, 47, 114, 1);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo__img {
+    width: 180px;
+  }
+  .logo__text {
+    font-size: 70px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .logo {
+  }
+  .logo__img {
+    width: 150px;
+  }
+  .logo__text {
+    font-size: 50px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .logo {
+  }
+  .logo__img {
+    width: 115px;
+  }
+  .logo__text {
+    font-size: 42px;
   }
 }
