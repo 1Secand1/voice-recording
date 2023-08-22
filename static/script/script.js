@@ -11,15 +11,17 @@ function addСlassPress(idButton, className) {
     button.classList.remove(className);
   }
 
-  if (isMobile) {
-    button.addEventListener("touchstart", classListAdd);
-    button.addEventListener("touchend", classListRemove);
-    button.addEventListener("touchleave", classListRemove);
-  } else {
-    button.addEventListener("mousedown", classListAdd);
-    button.addEventListener("mouseup", classListRemove);
-    button.addEventListener("mouseout", classListRemove);
-  }
+  button.addEventListener("touchstart", classListAdd);
+  button.addEventListener("touchend", classListRemove);
+  button.addEventListener("touchleave", classListRemove);
+
+  button.addEventListener("mousedown", classListAdd);
+  button.addEventListener("mouseup", classListRemove);
+  button.addEventListener("mouseout", classListRemove);
 }
 
 addСlassPress("voiceRecording", "animated");
+
+const screenWidth = window.screen.width;
+
+alert(screenWidth);
