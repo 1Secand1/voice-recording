@@ -2,7 +2,7 @@ function addСlassPress(idButton, className) {
   const button = document.getElementById(idButton);
   const isMobile =
     "ontouchstart" in document.documentElement &&
-    navigator.userAgent.toLowerCase().indexOf("chrome") == -1;
+    navigator.userAgent.match(/Mobi/);
 
   function classListAdd() {
     button.classList.add(className);
