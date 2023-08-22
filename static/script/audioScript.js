@@ -1,122 +1,82 @@
-if (0) {
+function audioRecordingScript() {
   const audioRecording = document.getElementById("download");
   const button = document.getElementById("voiceRecording");
+  const isMobile =
+    "ontouchstart" in document.documentElement &&
+    navigator.userAgent.match(/Mobi/);
 
-  async function checkAccess() {
-    let useAuthorization = true;
-    await navigator.mediaDevices.getUserMedia({ audio: true });
+  let mediaRecorder;
+  let recordedChunks = [];
 
-    const result = await navigator.permissions.query({ name: "microphone" });
+  function initializeMediaRecorder(stream) {
+    const options = { mimeType: "audio/webm" };
+    mediaRecorder = new MediaRecorder(stream, options);
 
-    if (result.state == "granted") {
-      console.log("Да");
-      useAuthorization = true;
-    }
+    mediaRecorder.addEventListener("dataavailable", (e) => {
+      recordedChunks = [];
+      if (e.data.size > 0) recordedChunks.push(e.data);
+    });
 
-    if (result.state == "prompt") {
-      console.log("Нет");
-      useAuthorization = false;
-    }
-
-    if (result.state == "denied") {
-      console.log("Заблокировано");
-      useAuthorization = false;
-    }
-
-    result.onchange = function () {};
-
-    console.log("Отдаёт", useAuthorization);
-    return useAuthorization;
+    mediaRecorder.addEventListener("stop", () => {
+      audioRecording.src = URL.createObjectURL(new Blob(recordedChunks));
+    });
   }
+  function uploadAudioFile(file) {
+    const formData = new FormData();
+    formData.append("audioFile", file);
 
-  button.addEventListener("mouseup", async () => {
-    const getCheckAccess = await checkAccess();
+    const url = "/uploadAudio";
 
-    const handleSuccess = function (stream) {
-      const options = { mimeType: "audio/webm" };
-      let recordedChunks = [];
-      const mediaRecorder = new MediaRecorder(stream, options);
-
-      mediaRecorder.addEventListener("dataavailable", (e) => {
-        if (e.data.size > 0) recordedChunks.push(e.data);
-      });
-
-      mediaRecorder.addEventListener("stop", () => {
-        audioRecording.src = URL.createObjectURL(new Blob(recordedChunks));
-      });
-
-      button.addEventListener("mouseup", () => {
-        mediaRecorder.stop();
-        console.log("Запись остановлена");
-      });
-
-      button.addEventListener("mousedown", () => {
-        recordedChunks = [];
-        mediaRecorder.start();
-        console.log("Запись запущена");
-      });
-    };
-
-    if (getCheckAccess) {
-      navigator.mediaDevices.getUserMedia({ audio: true }).then(handleSuccess);
-    }
-
-    if (!getCheckAccess) {
-      navigator.mediaDevices.getUserMedia({ audio: true });
-    }
-  });
-}
-
-const audioRecording = document.getElementById("download");
-const button = document.getElementById("voiceRecording");
-const isMobile =
-  "ontouchstart" in document.documentElement &&
-  navigator.userAgent.match(/Mobi/);
-
-let mediaRecorder;
-let recordedChunks = [];
-
-function initializeMediaRecorder(stream) {
-  const options = { mimeType: "audio/webm" };
-  mediaRecorder = new MediaRecorder(stream, options);
-
-  mediaRecorder.addEventListener("dataavailable", (e) => {
-    if (e.data.size > 0) recordedChunks.push(e.data);
-  });
-
-  mediaRecorder.addEventListener("stop", () => {
-    audioRecording.src = URL.createObjectURL(new Blob(recordedChunks));
-  });
-}
-
-function startRecording() {
-  if (mediaRecorder && mediaRecorder.state === "recording") {
-    mediaRecorder.stop();
-    console.log("Запись остановлена");
-  } else {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        initializeMediaRecorder(stream);
-        mediaRecorder.start();
-        console.log("Запись запущена");
+    fetch(url, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        console.log(formData);
+        if (response.ok) {
+          console.log("Аудиофайл успешно отправлен на сервер");
+        } else {
+          console.error("Ошибка при отправке аудиофайла на сервер");
+        }
       })
       .catch((error) => {
-        console.error("Ошибка при запросе на использование микрофона:", error);
+        console.error("Ошибка при отправке аудиофайла: ", error);
       });
   }
-}
-function stopRecording() {
-  if (mediaRecorder && mediaRecorder.state === "recording") {
-    mediaRecorder.stop();
-    console.log("Запись остановлена");
+
+  function startRecording() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+      console.log("Запись остановлена");
+    } else {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          initializeMediaRecorder(stream);
+          mediaRecorder.start();
+          console.log("Запись запущена");
+        })
+        .catch((error) => {
+          console.error(
+            "Ошибка при запросе на использование микрофона:",
+            error
+          );
+        });
+    }
+  }
+  function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+      console.log("Запись остановлена");
+    }
+  }
+
+  if (isMobile) {
+    button.addEventListener("touchstart", startRecording);
+    button.addEventListener("touchend", stopRecording);
+  } else {
+    button.addEventListener("mousedown", startRecording);
+    button.addEventListener("mouseup", stopRecording);
   }
 }
-
-if (isMobile) {
-  button.addEventListener("touchstart", startRecording);
-  button.addEventListener("touchend", stopRecording);
-} else {
-  button.addEventListener("mousedown", startRecording);
-  button.addEventListener("mouseup", stopRecording);
-}
+audioRecordingScript();
