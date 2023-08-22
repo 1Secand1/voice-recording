@@ -71,14 +71,12 @@ function audioRecordingScript() {
     }
   }
 
-  if (isMobile) {
-    button.addEventListener("touchstart", startRecording);
-    button.addEventListener("touchend", stopRecording);
-    button.addEventListener("touchleave", stopRecording);
-  } else {
-    button.addEventListener("mousedown", startRecording);
-    button.addEventListener("mouseup", stopRecording);
-    button.addEventListener("mouseout", stopRecording);
-  }
+  button.addEventListener("touchstart", startRecording);
+  button.addEventListener("touchend", stopRecording);
+  button.addEventListener("touchleave", stopRecording);
+
+  button.addEventListener("mousedown", startRecording);
+  button.addEventListener("mouseup", stopRecording);
+  button.addEventListener("mouseout", stopRecording);
 }
 audioRecordingScript();
