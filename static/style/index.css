@@ -198,9 +198,11 @@ body {
   .logo {
   }
   .logo__img {
-    width: 115px;
+    width: 100px;
   }
   .logo__text {
-    font-size: 42px;
+    font-size: 35px;
   }
 }
+
+
